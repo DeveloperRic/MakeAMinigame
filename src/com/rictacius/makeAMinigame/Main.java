@@ -118,7 +118,7 @@ public class Main extends JavaPlugin implements Listener {
 			Methods.sendColoredMessage(ChatColor.AQUA, ("Trace:"), ChatColor.RED);
 			e.printStackTrace();
 		}
-		Methods.sendColoredMessage(this, ChatColor.AQUA, ("Config successfuly registered!"), ChatColor.LIGHT_PURPLE);
+		Methods.sendColoredMessage(ChatColor.AQUA, ("Config successfuly registered!"), ChatColor.LIGHT_PURPLE);
 	}
 
 	public static Plugin getPlugin() {
