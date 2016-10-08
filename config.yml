@@ -1,0 +1,10 @@
+##########################
+#                        #
+#     Make A Minigame    #
+#                        #
+config-version: 1
+#                        #
+##########################
+
+debug: false
+logger-size: 999999999

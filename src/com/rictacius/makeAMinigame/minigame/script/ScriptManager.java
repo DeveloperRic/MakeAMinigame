@@ -1,15 +1,10 @@
 package com.rictacius.makeAMinigame.minigame.script;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.rictacius.makeAMinigame.util.Log;
 
@@ -49,27 +44,14 @@ public class ScriptManager {
 	}
 
 	public static List<ScriptLine> readScript(Script script, Script.Section section) {
+		Log.log(ScriptManager.class,
+				"Reading Script (Section=" + section.toString() + ") " + script.getFile().getPath(), Log.Level.INFO);
 		List<ScriptLine> send = new ArrayList<ScriptLine>();
-		File file = script.getFile();
-		FileConfiguration config = new YamlConfiguration();
-		try {
-			config.load(file);
-		} catch (FileNotFoundException e) {
-			Log.log(ScriptManager.class,
-					"Could not read script {" + script.getName() + "} because the script's file could not be found!",
-					Log.Level.FATAL, e);
-			e.printStackTrace();
-		} catch (IOException e) {
-			Log.log(ScriptManager.class, "Could not read script {" + script.getName() + "}!", Log.Level.FATAL, e);
-			e.printStackTrace();
-		} catch (InvalidConfigurationException e) {
-			Log.log(ScriptManager.class, "Could not read script {" + script.getName()
-					+ "} because the script's file was configured incorrectly (YAML)!", Log.Level.FATAL, e);
-			e.printStackTrace();
-		}
+		FileConfiguration config = ScriptUtils.getConfig(script);
 		List<String> lines = config.getStringList(section.toString());
-		for (String line : lines) {
-			ScriptLine sline = new ScriptLine(line, section);
+		for (int i = 0; i < lines.size(); i++) {
+			String line = lines.get(i);
+			ScriptLine sline = new ScriptLine(line, section, i, script);
 			send.add(sline);
 		}
 		return send;
@@ -79,27 +61,32 @@ public class ScriptManager {
 		if (!section.equals(Script.Section.LISTENER)) {
 			return readScript(script, section);
 		}
+		Log.log(ScriptManager.class, "Reading Script (Section=" + section.toString() + ", Event=" + event.toString()
+				+ ") " + script.getFile().getPath(), Log.Level.INFO);
 		List<ScriptLine> send = new ArrayList<ScriptLine>();
-		File file = script.getFile();
-		FileConfiguration config = new YamlConfiguration();
-		try {
-			config.load(file);
-		} catch (FileNotFoundException e) {
-			Log.log(ScriptManager.class,
-					"Could not read script {" + script.getName() + "} because the script's file could not be found!",
-					Log.Level.FATAL, e);
-			e.printStackTrace();
-		} catch (IOException e) {
-			Log.log(ScriptManager.class, "Could not read script {" + script.getName() + "}!", Log.Level.FATAL, e);
-			e.printStackTrace();
-		} catch (InvalidConfigurationException e) {
-			Log.log(ScriptManager.class, "Could not read script {" + script.getName()
-					+ "} because the script's file was configured incorrectly (YAML)!", Log.Level.FATAL, e);
-			e.printStackTrace();
-		}
+		FileConfiguration config = ScriptUtils.getConfig(script);
 		List<String> lines = config.getStringList(section.toString() + "." + event.toString());
-		for (String line : lines) {
-			ScriptLine sline = new ScriptLine(line, section, event);
+		for (int i = 0; i < lines.size(); i++) {
+			String line = lines.get(i);
+			ScriptLine sline = new ScriptLine(line, section, event, 1, script);
+			send.add(sline);
+		}
+		return send;
+	}
+
+	public static List<ScriptLine> readScript(Script script, Script.Section section, String name) {
+		if (!section.equals(Script.Section.FUNCTION) && !section.equals(Script.Section.PROCEDURE)) {
+			return readScript(script, section);
+		}
+		Log.log(ScriptManager.class,
+				"Reading Script (Section=" + section.toString() + ", SUB=" + name + ") " + script.getFile().getPath(),
+				Log.Level.INFO);
+		List<ScriptLine> send = new ArrayList<ScriptLine>();
+		FileConfiguration config = ScriptUtils.getConfig(script);
+		List<String> lines = config.getStringList(name);
+		for (int i = 0; i < lines.size(); i++) {
+			String line = lines.get(i);
+			ScriptLine sline = new ScriptLine(line, section, i, script);
 			send.add(sline);
 		}
 		return send;

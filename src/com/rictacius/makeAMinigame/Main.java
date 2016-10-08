@@ -15,6 +15,8 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.rictacius.makeAMinigame.test.MAMTester;
+
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
@@ -86,7 +88,7 @@ public class Main extends JavaPlugin implements Listener {
 
 	public void registerCommands() {
 		try {
-			getCommand("eutils").setExecutor(new eutils(this));
+			getCommand("mamtest").setExecutor(new MAMTester());
 		} catch (Exception e) {
 			Methods.sendColoredMessage(ChatColor.AQUA, ("Error while registering commands!"), ChatColor.RED);
 			Methods.sendColoredMessage(ChatColor.AQUA, ("Trace:"), ChatColor.RED);
@@ -97,9 +99,9 @@ public class Main extends JavaPlugin implements Listener {
 
 	public void registerEvents() {
 		try {
+			@SuppressWarnings("unused")
 			PluginManager pm = getServer().getPluginManager();
 
-			pm.registerEvents(new PData(), this);
 		} catch (Exception e) {
 			Methods.sendColoredMessage(ChatColor.AQUA, ("Error while registering events!"), ChatColor.RED);
 			Methods.sendColoredMessage(ChatColor.AQUA, ("Trace:"), ChatColor.RED);
@@ -118,7 +120,7 @@ public class Main extends JavaPlugin implements Listener {
 			Methods.sendColoredMessage(ChatColor.AQUA, ("Trace:"), ChatColor.RED);
 			e.printStackTrace();
 		}
-		Methods.sendColoredMessage(this, ChatColor.AQUA, ("Config successfuly registered!"), ChatColor.LIGHT_PURPLE);
+		Methods.sendColoredMessage(ChatColor.AQUA, ("Config successfuly registered!"), ChatColor.LIGHT_PURPLE);
 	}
 
 	public static Plugin getPlugin() {
@@ -126,32 +128,8 @@ public class Main extends JavaPlugin implements Listener {
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	private File configf, chatchannelsf, reportsf, expf, votesf, bossbarf, nicksf;
-	private FileConfiguration config, channels, reports, exp, votes, bossbar, nicks;
-
-	public FileConfiguration getChannelsConfig() {
-		return this.channels;
-	}
-
-	public FileConfiguration getReportsConfig() {
-		return this.reports;
-	}
-
-	public FileConfiguration getExperienceConfig() {
-		return this.exp;
-	}
-
-	public FileConfiguration getVotesConfig() {
-		return this.votes;
-	}
-
-	public FileConfiguration getBossBarConfig() {
-		return this.bossbar;
-	}
-
-	public FileConfiguration getNicksConfig() {
-		return this.nicks;
-	}
+	private File configf;
+	private FileConfiguration config;
 
 	public int reloadAllConfigFiles() {
 		int errors = 0;
@@ -169,57 +147,12 @@ public class Main extends JavaPlugin implements Listener {
 			errorFiles.add(file);
 		}
 		try {
-			channels = YamlConfiguration.loadConfiguration(chatchannelsf);
+			// channels = YamlConfiguration.loadConfiguration(chatchannelsf);
 		} catch (Exception e) {
 			errors++;
 			trace = e.getStackTrace();
 			traces.add(trace);
 			file = "Message Config File";
-			errorFiles.add(file);
-		}
-		try {
-			reports = YamlConfiguration.loadConfiguration(reportsf);
-		} catch (Exception e) {
-			errors++;
-			trace = e.getStackTrace();
-			traces.add(trace);
-			file = "Reports Config File";
-			errorFiles.add(file);
-		}
-		try {
-			exp = YamlConfiguration.loadConfiguration(expf);
-		} catch (Exception e) {
-			errors++;
-			trace = e.getStackTrace();
-			traces.add(trace);
-			file = "Experience Config File";
-			errorFiles.add(file);
-		}
-		try {
-			votes = YamlConfiguration.loadConfiguration(votesf);
-		} catch (Exception e) {
-			errors++;
-			trace = e.getStackTrace();
-			traces.add(trace);
-			file = "Vote Config File";
-			errorFiles.add(file);
-		}
-		try {
-			bossbar = YamlConfiguration.loadConfiguration(bossbarf);
-		} catch (Exception e) {
-			errors++;
-			trace = e.getStackTrace();
-			traces.add(trace);
-			file = "BossBar Config File";
-			errorFiles.add(file);
-		}
-		try {
-			nicks = YamlConfiguration.loadConfiguration(nicksf);
-		} catch (Exception e) {
-			errors++;
-			trace = e.getStackTrace();
-			traces.add(trace);
-			file = "Nicks Config File";
 			errorFiles.add(file);
 		}
 		if (errors > 0) {
@@ -246,177 +179,34 @@ public class Main extends JavaPlugin implements Listener {
 	public void saveAllConfigFiles() {
 		saveConfig();
 		try {
-			getChannelsConfig().save(chatchannelsf);
+			// getChannelsConfig().save(chatchannelsf);
 		} catch (Exception ex) {
-			Methods.sendColoredMessage(ChatColor.GOLD, ("Could not save config to " + chatchannelsf), ChatColor.RED);
-			Methods.sendColoredMessage(ChatColor.GOLD, ("Trace:"), ChatColor.RED);
+			// Methods.sendColoredMessage(ChatColor.GOLD, ("Could not save
+			// config to " + chatchannelsf), ChatColor.RED);
+			// Methods.sendColoredMessage(ChatColor.GOLD, ("Trace:"),
+			// ChatColor.RED);
 			ex.printStackTrace();
 		}
-		try {
-			getReportsConfig().save(reportsf);
-		} catch (Exception ex) {
-			Methods.sendColoredMessage(ChatColor.GOLD, ("Could not save config to " + reportsf), ChatColor.RED);
-			Methods.sendColoredMessage(ChatColor.GOLD, ("Trace:"), ChatColor.RED);
-			ex.printStackTrace();
-		}
-		try {
-			getExperienceConfig().save(expf);
-		} catch (Exception ex) {
-			Methods.sendColoredMessage(ChatColor.GOLD, ("Could not save config to " + expf), ChatColor.RED);
-			Methods.sendColoredMessage(ChatColor.GOLD, ("Trace:"), ChatColor.RED);
-			ex.printStackTrace();
-		}
-		try {
-			getVotesConfig().save(votesf);
-		} catch (Exception ex) {
-			Methods.sendColoredMessage(ChatColor.GOLD, ("Could not save config to " + votesf), ChatColor.RED);
-			Methods.sendColoredMessage(ChatColor.GOLD, ("Trace:"), ChatColor.RED);
-			ex.printStackTrace();
-		}
-		try {
-			getBossBarConfig().save(bossbarf);
-		} catch (Exception ex) {
-			Methods.sendColoredMessage(ChatColor.GOLD, ("Could not save config to " + bossbarf), ChatColor.RED);
-			Methods.sendColoredMessage(ChatColor.GOLD, ("Trace:"), ChatColor.RED);
-			ex.printStackTrace();
-		}
-		try {
-			getNicksConfig().save(nicksf);
-		} catch (Exception ex) {
-			Methods.sendColoredMessage(ChatColor.GOLD, ("Could not save config to " + nicksf), ChatColor.RED);
-			Methods.sendColoredMessage(ChatColor.GOLD, ("Trace:"), ChatColor.RED);
-			ex.printStackTrace();
-		}
-	}
 
-	public void saveChannelsFile() {
-		if (channels == null || chatchannelsf == null) {
-			return;
-		}
-		try {
-			getChannelsConfig().save(chatchannelsf);
-		} catch (Exception ex) {
-			Methods.sendColoredMessage(ChatColor.GOLD, ("Could not save config to " + chatchannelsf), ChatColor.RED);
-			Methods.sendColoredMessage(ChatColor.GOLD, ("Trace:"), ChatColor.RED);
-			ex.printStackTrace();
-		}
-	}
-
-	public void saveReportsFile() {
-		try {
-			getReportsConfig().save(reportsf);
-		} catch (Exception ex) {
-			Methods.sendColoredMessage(ChatColor.GOLD, ("Could not save config to " + reportsf), ChatColor.RED);
-			Methods.sendColoredMessage(ChatColor.GOLD, ("Trace:"), ChatColor.RED);
-			ex.printStackTrace();
-		}
-	}
-
-	public void saveExperienceFile() {
-		try {
-			getExperienceConfig().save(expf);
-		} catch (Exception ex) {
-			Methods.sendColoredMessage(ChatColor.GOLD, ("Could not save config to " + expf), ChatColor.RED);
-			Methods.sendColoredMessage(ChatColor.GOLD, ("Trace:"), ChatColor.RED);
-			ex.printStackTrace();
-		}
-	}
-
-	public void saveVotesFile() {
-		try {
-			getVotesConfig().save(votesf);
-		} catch (Exception ex) {
-			Methods.sendColoredMessage(ChatColor.GOLD, ("Could not save config to " + votesf), ChatColor.RED);
-			Methods.sendColoredMessage(ChatColor.GOLD, ("Trace:"), ChatColor.RED);
-			ex.printStackTrace();
-		}
-	}
-
-	public void saveBossBarFile() {
-		try {
-			getBossBarConfig().save(bossbarf);
-		} catch (Exception ex) {
-			Methods.sendColoredMessage(ChatColor.GOLD, ("Could not save config to " + bossbarf), ChatColor.RED);
-			Methods.sendColoredMessage(ChatColor.GOLD, ("Trace:"), ChatColor.RED);
-			ex.printStackTrace();
-		}
-	}
-
-	public void saveNicksFile() {
-		try {
-			getNicksConfig().save(nicksf);
-		} catch (Exception ex) {
-			Methods.sendColoredMessage(ChatColor.GOLD, ("Could not save config to " + nicksf), ChatColor.RED);
-			Methods.sendColoredMessage(ChatColor.GOLD, ("Trace:"), ChatColor.RED);
-			ex.printStackTrace();
-		}
 	}
 
 	private void createFiles() {
 		try {
 			configf = new File(getDataFolder(), "config.yml");
-			chatchannelsf = new File(getDataFolder(), "chatchannels.yml");
-			reportsf = new File(getDataFolder(), "reports.yml");
-			expf = new File(getDataFolder(), "experience.yml");
-			votesf = new File(getDataFolder(), "votes.yml");
-			bossbarf = new File(getDataFolder(), "bossbar.yml");
-			nicksf = new File(getDataFolder(), "nicks.yml");
 
 			if (!configf.exists()) {
 				configf.getParentFile().mkdirs();
 				saveResource("config.yml", false);
 			}
-			if (!chatchannelsf.exists()) {
-				chatchannelsf.getParentFile().mkdirs();
-				saveResource("chatchannels.yml", false);
-			}
-			if (!reportsf.exists()) {
-				reportsf.getParentFile().mkdirs();
-				saveResource("reports.yml", false);
-			}
-			if (!expf.exists()) {
-				expf.getParentFile().mkdirs();
-				saveResource("experience.yml", false);
-			}
-			if (!votesf.exists()) {
-				votesf.getParentFile().mkdirs();
-				saveResource("votes.yml", false);
-			}
-			if (!bossbarf.exists()) {
-				bossbarf.getParentFile().mkdirs();
-				saveResource("bossbar.yml", false);
-			}
-			if (!nicksf.exists()) {
-				nicksf.getParentFile().mkdirs();
-				saveResource("nicks.yml", false);
-			}
 
 			config = new YamlConfiguration();
-			channels = new YamlConfiguration();
-			reports = new YamlConfiguration();
-			exp = new YamlConfiguration();
-			votes = new YamlConfiguration();
-			bossbar = new YamlConfiguration();
-			nicks = new YamlConfiguration();
 			try {
 				config.load(configf);
-				channels.load(chatchannelsf);
-				reports.load(reportsf);
-				exp.load(expf);
-				votes.load(votesf);
-				bossbar.load(bossbarf);
-				nicks.load(nicksf);
 			} catch (Exception e) {
 				Methods.sendColoredMessage(ChatColor.LIGHT_PURPLE, ("Error while registering config!"), ChatColor.RED);
 				e.printStackTrace();
 			}
 			getConfig().options().copyDefaults(true);
-			getChannelsConfig().options().copyDefaults(true);
-			getReportsConfig().options().copyDefaults(true);
-			getExperienceConfig().options().copyDefaults(true);
-			getVotesConfig().options().copyDefaults(true);
-			getBossBarConfig().options().copyDefaults(true);
-			getNicksConfig().options().copyDefaults(true);
 			saveAllConfigFiles();
 		} catch (Exception e) {
 			Methods.sendColoredMessage(ChatColor.LIGHT_PURPLE, ("Error while registering config!"), ChatColor.RED);

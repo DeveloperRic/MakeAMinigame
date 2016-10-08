@@ -1,7 +1,7 @@
 package com.rictacius.makeAMinigame.minigame.script.operation;
 
 public abstract class Operation {
-	private String raw;
+	protected String raw;
 
 	public Operation(String raw) {
 		this.raw = raw;
