@@ -90,7 +90,7 @@ public abstract class MPlayerOperation extends Operation {
 			this.mplayer = player;
 			this.method = method;
 			this.args = args;
-			this.player = mplayer.getPlayer();
+			this.player = mplayer.player();
 		}
 
 		@Override
@@ -124,7 +124,7 @@ public abstract class MPlayerOperation extends Operation {
 
 		@Override
 		public Object extract() {
-			return player.getPlayer();
+			return player.player();
 		}
 
 	}

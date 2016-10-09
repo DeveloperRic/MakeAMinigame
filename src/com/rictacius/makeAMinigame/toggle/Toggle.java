@@ -8,6 +8,7 @@ public abstract class Toggle {
 	private Arena arena;
 
 	public static enum Type {
+		ARENA_RESTART;
 	}
 
 	public Toggle(Type type) {

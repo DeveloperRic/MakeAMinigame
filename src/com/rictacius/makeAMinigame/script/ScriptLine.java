@@ -22,7 +22,7 @@ public class ScriptLine {
 	private String line;
 	private String raw;
 	private Script.Section section;
-	private Script.Section.EVENT event;
+	private Script.Section.EventType event;
 	private boolean isevent;
 	private int number;
 	private Script script;
@@ -34,7 +34,7 @@ public class ScriptLine {
 		this.script = script;
 	}
 
-	public ScriptLine(String line, Script.Section section, Script.Section.EVENT event, int number, Script script) {
+	public ScriptLine(String line, Script.Section section, Script.Section.EventType event, int number, Script script) {
 		this.line = line.trim();
 		this.raw = line;
 		this.number = number;
@@ -183,7 +183,7 @@ public class ScriptLine {
 		return valid;
 	}
 
-	public Script.Section.EVENT getEvent() {
+	public Script.Section.EventType getEvent() {
 		return event;
 	}
 

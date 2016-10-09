@@ -15,10 +15,10 @@ public class Script {
 	public static final String nul = "_UNDEFINED_";
 
 	public static enum Section {
-		LOAD, RUN, ARENA_START, ARENA_FINISH, END, LISTENER, FUNCTION, PROCEDURE;
+		LOAD, RUN, END, EVENT, FUNCTION, PROCEDURE;
 
-		public static enum EVENT {
-			ARENA_CREATED;
+		public static enum EventType {
+			ARENA_CREATED, ARENA_START, ARENA_FINISH, ARENA_STARTING, ARENA_START_TIME;
 		}
 	}
 

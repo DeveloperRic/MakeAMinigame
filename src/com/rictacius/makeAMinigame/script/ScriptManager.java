@@ -61,8 +61,8 @@ public class ScriptManager {
 		return send;
 	}
 
-	public static List<ScriptLine> readScript(Script script, Script.Section section, Script.Section.EVENT event) {
-		if (!section.equals(Script.Section.LISTENER)) {
+	public static List<ScriptLine> readScript(Script script, Script.Section section, Script.Section.EventType event) {
+		if (!section.equals(Script.Section.EVENT)) {
 			return readScript(script, section);
 		}
 		Log.log(ScriptManager.class, "Reading Script (Section=" + section.toString() + ", Event=" + event.toString()

@@ -1,0 +1,42 @@
+name: ''
+settings:
+ world: ''
+ lobby: ''
+ spawn: ''
+ minPlayers = 3;
+ maxPlayers = 12;
+ restart-onend: false
+ restart-delay: 100
+ clear-inv-onjoin: true
+ reset-inv-onleave: true
+ start-timer-message-interval: 5
+ end-timer-message-interval: 60
+ random-spawns: false
+ allow-build-in-lobby: false
+ bypass-build-permission: 'makeaminigame.minigame.buildinlobby'
+ game-ends-with-kills: true
+ kills-to-end: 20
+ game-ends-with-time: true
+ time-to-end: 300
+messages:
+ player-join: '&aWelcome to the minigame!'
+ arena-starting: '&6Arena has reached minimum player count... Game starting!'
+ start-timer: '&cGame starting in %time'
+ end-timer: '&cThe game will end in %time%'
+ game-started: '&eThe game has started!'
+ join-team: '&6You joined the %team% team!'
+ finish-kill-table:
+  - ''
+  - '&cTeam %team% won the game!'
+  - '&7           ----'
+  - '&e         Kill Table'
+  - '&6    %1kill% &7- &b%1count%'
+  - '&e    %2kill% &7- &b%2count%'
+  - '&c    %1kill% &7- &b%2count%'
+teams:
+ red:
+  name: '&cRed'
+  spawns: []
+ blue:
+  name '&bBlue'
+  spawns: []
