@@ -3,9 +3,13 @@ package com.rictacius.makeAMinigame.script;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.bukkit.configuration.file.FileConfiguration;
 
+import com.rictacius.makeAMinigame.script.operation.ErrorOperation;
+import com.rictacius.makeAMinigame.script.operation.Operation;
+import com.rictacius.makeAMinigame.script.operation.RunOperation;
 import com.rictacius.makeAMinigame.util.Log;
 
 public class ScriptManager {
@@ -88,6 +92,44 @@ public class ScriptManager {
 			String line = lines.get(i);
 			ScriptLine sline = new ScriptLine(line, section, i, script);
 			send.add(sline);
+		}
+		return send;
+	}
+
+	public static void compile(List<ScriptLine> lines) {
+		if (lines.isEmpty())
+			return;
+		for (ScriptLine line : lines) {
+			Script script = line.getScript();
+			Operation op = line.parse();
+			Log.log(ScriptManager.class, "Compiling ScriptLine (Script=" + script.getFile().getPath() + ") ",
+					Log.Level.INFO);
+			if (op instanceof ErrorOperation) {
+				ErrorOperation eop = (ErrorOperation) op;
+				Exception error = eop.getException();
+				Log.Level lvl = eop.getLevel();
+				if (error != null) {
+					Log.log(ScriptManager.class,
+							"Found error " + error.getClass().getSimpleName() + " message = " + eop.getMessage(), lvl);
+				} else {
+					Log.log(ScriptManager.class, "Found error {unknown} Message = " + eop.getMessage(), lvl);
+				}
+				eop.run();
+			} else if (op instanceof RunOperation) {
+				RunOperation rop = (RunOperation) op;
+				compile(rop.getLines());
+			}
+		}
+	}
+
+	public static List<String> getFunctions(Script script) {
+		List<String> send = new ArrayList<String>();
+		FileConfiguration config = ScriptUtils.getConfig(script);
+		Map<String, Object> values = config.getValues(false);
+		for (String key : values.keySet()) {
+			if (ScriptUtils.isFunction(key, script)) {
+				send.add(key);
+			}
 		}
 		return send;
 	}

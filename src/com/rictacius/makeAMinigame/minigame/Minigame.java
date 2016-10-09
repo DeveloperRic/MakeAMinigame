@@ -3,7 +3,7 @@ package com.rictacius.makeAMinigame.minigame;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.rictacius.makeAMinigame.minigame.toggle.Toggle;
+import com.rictacius.makeAMinigame.toggle.Toggle;
 
 public class Minigame {
 	private List<Toggle> toggles = new ArrayList<Toggle>();
