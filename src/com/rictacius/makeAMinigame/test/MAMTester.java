@@ -8,8 +8,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.event.Listener;
 
 import com.rictacius.makeAMinigame.Main;
-import com.rictacius.makeAMinigame.minigame.script.Script;
-import com.rictacius.makeAMinigame.minigame.script.ScriptManager;
+import com.rictacius.makeAMinigame.script.Script;
+import com.rictacius.makeAMinigame.script.ScriptManager;
 
 import net.md_5.bungee.api.ChatColor;
 
@@ -33,7 +33,7 @@ public class MAMTester implements CommandExecutor, Listener {
 			sender.sendMessage("PATH=" + path);
 			String name = path;
 			if (path.contains(File.separator)) {
-				name = path.substring(path.lastIndexOf(File.separator.charAt(0) + 1));
+				name = path.substring(path.lastIndexOf(File.separator.charAt(0)) + 1);
 			}
 			sender.sendMessage("NAME=" + name);
 			Script script = new Script(name, new File(Main.pl.getDataFolder(), path));

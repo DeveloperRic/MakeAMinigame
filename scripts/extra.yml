@@ -1,0 +1,5 @@
+addSpace:
+ - 'mplayer message boss &8'
+ - 'var real'
+ - 'set real = mplayer extract boss'
+ - 'mplayer reflect boss teleport real'
