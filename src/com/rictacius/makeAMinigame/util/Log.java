@@ -8,11 +8,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.ConsoleCommandSender;
 
 import com.rictacius.makeAMinigame.Main;
+import com.rictacius.makeAMinigame.test.MAMTester;
 
 import net.md_5.bungee.api.ChatColor;
 
 public class Log {
-	private static boolean enabled;
+	private static boolean enabled = true;
 	private static ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
 	private static ArrayList<String> timeline = new ArrayList<String>();;
 
@@ -21,7 +22,7 @@ public class Log {
 	}
 
 	static String prefix() {
-		return ChatColor.translateAlternateColorCodes('&', "&7[&aTweetIt&7] &r");
+		return ChatColor.translateAlternateColorCodes('&', "&7[&aMakeAMinigame&7] &r");
 	}
 
 	/**
@@ -55,7 +56,7 @@ public class Log {
 	 */
 	public static void log(Class<?> source, String message, Level lvl) {
 		if (enabled) {
-			if (timeline.size() >= Integer.parseInt(Main.pl.getConfig().getString("logger.size")))
+			if (timeline.size() >= Integer.parseInt(Main.pl.getConfig().getString("logger-size")))
 				timeline.clear();
 			String send = source.getSimpleName();
 			String raw = "| [" + send + "] |" + message;
@@ -74,7 +75,7 @@ public class Log {
 				send = (prefix() + ChatColor.AQUA + message);
 				break;
 			}
-			if (Boolean.parseBoolean(Main.pl.getConfig().getString("debug"))) {
+			if (Boolean.parseBoolean(Main.pl.getConfig().getString("debug")) || MAMTester.testing) {
 				console.sendMessage(send);
 			}
 			SimpleDateFormat formatter = new SimpleDateFormat("d/m/yyyy HH:mm");
@@ -100,7 +101,7 @@ public class Log {
 		log(source, " E: " + e.getClass().getSimpleName() + ", Trace: ", lvl);
 		for (StackTraceElement el : e.getStackTrace()) {
 			log(source,
-					"  Class=" + el.getClassName() + " , Method=" + el.getMethodName() + " , Loc=" + el.getLineNumber(),
+					"  Class= " + el.getClassName() + " , Method= " + el.getMethodName() + " , Loc= " + el.getLineNumber(),
 					lvl);
 		}
 		log(source, "--------------------------------------------------------", lvl);

@@ -1,0 +1,16 @@
+LOAD:
+ - 'var theboss'
+ - 'set theboss = getTheBoss'
+ - 'mplayer message boss &bWhat''s 9 + 10?'
+ - 'mplayer message boss &7*21*'
+ - 'var result'
+ - 'set result = math 9 + 10'
+ - 'mplayer message boss &c&lNo! its %result%'
+ - 'mplayer message boss &8.'
+ - 'mplayer message boss &bDo you know what pi is?'
+ - 'set result = math 22 / 7'
+ - 'mplayer message boss &ait''s %result% btw :)'
+getTheBoss:
+ - 'var boss'
+ - 'set boss = mplayer create RictAcius'
+ - 'return boss'

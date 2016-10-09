@@ -2,6 +2,7 @@ package com.rictacius.makeAMinigame.data;
 
 import java.util.HashMap;
 
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 public class MPlayer {
@@ -33,6 +34,10 @@ public class MPlayer {
 		if (settings.containsKey(key)) {
 			settings.remove(key);
 		}
+	}
+
+	public void message(String message) {
+		player.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
 	}
 
 }

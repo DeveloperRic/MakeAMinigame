@@ -1,0 +1,9 @@
+main: com.rictacius.makeAMinigame.Main
+version: alpha-3
+name: MakeAMinigame
+author: RictAcius
+softdepend: [Vault]
+
+commands:
+  mamtest:
+    description: Test command
