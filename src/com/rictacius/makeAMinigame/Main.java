@@ -45,6 +45,7 @@ public class Main extends JavaPlugin implements Listener {
 		setupChat();
 		setupEconomy();
 		setupPermissions();
+		Methods.sendColoredMessage(ChatColor.AQUA, ("Utils successfuly registered!"), ChatColor.LIGHT_PURPLE);
 	}
 
 	public static Permission permission = null;
@@ -208,6 +209,7 @@ public class Main extends JavaPlugin implements Listener {
 			}
 			getConfig().options().copyDefaults(true);
 			saveAllConfigFiles();
+			Methods.sendColoredMessage(ChatColor.AQUA, ("Config successfuly registered!"), ChatColor.LIGHT_PURPLE);
 		} catch (Exception e) {
 			Methods.sendColoredMessage(ChatColor.LIGHT_PURPLE, ("Error while registering config!"), ChatColor.RED);
 			e.printStackTrace();

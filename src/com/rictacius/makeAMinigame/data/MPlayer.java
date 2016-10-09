@@ -20,10 +20,9 @@ public class MPlayer {
 		return player;
 	}
 
-	public <T> Object getSetting(Class<T> root, String key) {
+	public Object getSetting(String key) {
 		Object setting = settings.get(key);
-		T cast = root.cast(setting);
-		return cast;
+		return setting;
 	}
 
 	public void addSetting(String key, Object value) {

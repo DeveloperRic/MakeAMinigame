@@ -7,8 +7,8 @@ import org.bukkit.Location;
 import org.bukkit.World;
 
 import com.rictacius.makeAMinigame.data.MPlayer;
-import com.rictacius.makeAMinigame.minigame.script.Script;
-import com.rictacius.makeAMinigame.minigame.script.ScriptManager;
+import com.rictacius.makeAMinigame.script.Script;
+import com.rictacius.makeAMinigame.script.ScriptManager;
 
 public class Arena {
 	private Minigame minigame;

@@ -15,7 +15,8 @@ import net.md_5.bungee.api.ChatColor;
 public class Log {
 	private static boolean enabled = true;
 	private static ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
-	private static ArrayList<String> timeline = new ArrayList<String>();;
+	private static ArrayList<String> timeline = new ArrayList<String>();
+	private static Class<?> previous;
 
 	public Log() {
 		enabled = true;
@@ -75,12 +76,46 @@ public class Log {
 				send = (prefix() + ChatColor.AQUA + message);
 				break;
 			}
+			SimpleDateFormat formatter = new SimpleDateFormat("d/m/yyyy HH:mm");
+			String dateString = formatter.format(new Date());
+			if (previous != null) {
+				String prev = previous.getName();
+				String next = source.getName();
+				if (prev.contains("\\.") && next.contains("\\.")) {
+					String[] prevd = prev.split("\\.");
+					String[] nextd = prev.split("\\.");
+					boolean common = false;
+					int i;
+					int dif = 0;
+					for (i = 0; i < prevd.length && i < nextd.length; i++) {
+						if (prevd[i].equals(nextd[i])) {
+							common = true;
+						} else {
+							dif = i - 3;
+						}
+					}
+					String degree = "";
+					for (int j = 0; j <= dif; j++) {
+						if (j > 5)
+							break;
+						degree = degree + "=";
+					}
+					if (!common) {
+						if (!previous.getName().equals(source.getName())) {
+							console.sendMessage("    !" + degree + "!");
+						}
+					}
+				} else {
+					if (!previous.getName().equals(source.getName())) {
+						console.sendMessage("    !====!");
+					}
+				}
+			}
 			if (Boolean.parseBoolean(Main.pl.getConfig().getString("debug")) || MAMTester.testing) {
 				console.sendMessage(send);
 			}
-			SimpleDateFormat formatter = new SimpleDateFormat("d/m/yyyy HH:mm");
-			String dateString = formatter.format(new Date());
 			timeline.add(dateString + ChatColor.stripColor(raw));
+			previous = source;
 		}
 	}
 
@@ -100,9 +135,8 @@ public class Log {
 		log(source, message, lvl);
 		log(source, " E: " + e.getClass().getSimpleName() + ", Trace: ", lvl);
 		for (StackTraceElement el : e.getStackTrace()) {
-			log(source,
-					"  Class= " + el.getClassName() + " , Method= " + el.getMethodName() + " , Loc= " + el.getLineNumber(),
-					lvl);
+			log(source, "  Class= " + el.getClassName() + " , Method= " + el.getMethodName() + " , Loc= "
+					+ el.getLineNumber(), lvl);
 		}
 		log(source, "--------------------------------------------------------", lvl);
 	}
