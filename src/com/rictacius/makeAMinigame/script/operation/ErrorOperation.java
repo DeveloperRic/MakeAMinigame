@@ -38,4 +38,16 @@ public class ErrorOperation extends Operation {
 		return line;
 	}
 
+	public String getMessage() {
+		return message;
+	}
+
+	public Log.Level getLevel() {
+		return lvl;
+	}
+
+	public Exception getException() {
+		return e;
+	}
+
 }
