@@ -164,6 +164,7 @@ public class Arena implements Listener {
 		for (String item : killTable) {
 			broadcast(item);
 		}
+		end();
 	}
 
 	public List<String> drawKillWinnerTable(Team winner) {

@@ -2,7 +2,6 @@ package com.rictacius.makeAMinigame.data;
 
 import java.util.HashMap;
 
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.PlayerInventory;
 
@@ -13,10 +12,11 @@ public class MPlayer {
 
 	public MPlayer(Player player) {
 		this.player = player;
+		player.chat("hi");
 	}
 
 	public void message(String message) {
-		player.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
+		player.sendMessage(message);
 	}
 
 	public void saveInventory() {

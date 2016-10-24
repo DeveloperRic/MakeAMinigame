@@ -1,6 +1,7 @@
 package com.rictacius.makeAMinigame.script.operation;
 
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -8,6 +9,8 @@ import org.bukkit.entity.Player;
 
 import com.rictacius.makeAMinigame.data.MPlayer;
 import com.rictacius.makeAMinigame.script.Script;
+import com.rictacius.makeAMinigame.script.Script.Section;
+import com.rictacius.makeAMinigame.script.ScriptLine;
 import com.rictacius.makeAMinigame.script.ScriptManager;
 import com.rictacius.makeAMinigame.script.ScriptUtils;
 import com.rictacius.makeAMinigame.util.Log;
@@ -85,7 +88,7 @@ public abstract class MPlayerOperation extends Operation {
 		private Object[] args;
 		private Player player;
 
-		public Reflect(String raw, String variable, Script script, MPlayer player, String method, Object... args) {
+		public Reflect(String raw, String variable, Script script, MPlayer player, String method, Object[] args) {
 			super(raw, variable, script);
 			this.mplayer = player;
 			this.method = method;
@@ -102,9 +105,63 @@ public abstract class MPlayerOperation extends Operation {
 				}
 				Method c = player.getClass().getMethod(method, a);
 				Object d = c.invoke(player);
-				Log.log(getClass(), script.getName() + " > Extracted Object of instance " + d.getClass().getSimpleName()
-						+ " from reflect operation " + raw, Log.Level.INFO);
+				if (d != null) {
+					Log.log(getClass(), script.getName() + " > Extracted Object of instance "
+							+ d.getClass().getSimpleName() + " from reflect operation " + raw, Log.Level.INFO);
+				} else {
+					Log.log(getClass(), script.getName() + " > Extracted Void Object from reflect operation " + raw,
+							Log.Level.INFO);
+				}
 				return d;
+			} catch (Exception e) {
+				Log.log(getClass(), script.getName() + " > Could not extract Object from reflect operation " + raw,
+						Log.Level.WARNING, e);
+				return null;
+			}
+		}
+
+	}
+
+	public static class CompoundReflect extends ReturnOperation {
+		private MPlayer mplayer;
+		private String method;
+		private Object[] args;
+		private String[] compound;
+		private Player player;
+		private ScriptLine line;
+
+		public CompoundReflect(String raw, String variable, Script script, MPlayer player, String method,
+				ScriptLine line, Object[] args) {
+			super(raw, variable, script);
+			this.mplayer = player;
+			this.method = method;
+			this.args = args;
+			this.player = mplayer.player();
+			this.line = line;
+		}
+
+		private String replaceVars(String input) {
+			HashMap<String, Object> vars = script.getTempVariables();
+			for (String var : vars.keySet()) {
+				input = input.replaceAll("<" + var + ">", vars.get(var).toString());
+			}
+			return input;
+		}
+
+		@Override
+		public Object extract() {
+			try {
+				for (String composite : compound) {
+					String var = composite.split("=")[0].replaceAll("<", "").replaceAll(">", "");
+					boolean isvoid = var.equals("void");
+					if (!isvoid)
+						script.addTempVariable(var);
+					ScriptLine subline = new ScriptLine(replaceVars(composite.split("=")[1]), line.getSection(), line.getLineNumber(), script);
+					ReturnOperation op = (ReturnOperation) subline.parse();
+					Object value = op.extract();
+					if (!isvoid)
+						script.setTempVariable(var, value);
+				}
 			} catch (Exception e) {
 				Log.log(getClass(), script.getName() + " > Could not extract Object from reflect operation " + raw,
 						Log.Level.WARNING, e);
