@@ -12,6 +12,7 @@ public class Script {
 	private File file;
 	private String name;
 	private HashMap<String, Object> variables = new HashMap<String, Object>();
+	private HashMap<String, Object> tempvariables = new HashMap<String, Object>();
 	public static final String nul = "_UNDEFINED_";
 
 	public static enum Section {
@@ -70,6 +71,33 @@ public class Script {
 	@SuppressWarnings("unchecked")
 	public HashMap<String, Object> getVariables() {
 		return (HashMap<String, Object>) variables.clone();
+	}
+
+	public boolean addTempVariable(String key) {
+		if (tempvariables.containsKey(key)) {
+			return false;
+		}
+		tempvariables.put(key, nul);
+		return true;
+	}
+
+	public boolean setTempVariable(String key, Object value) {
+		if (!tempvariables.containsKey(key)) {
+			return false;
+		}
+		tempvariables.put(key, value);
+		return true;
+	}
+
+	public Object getTempVariable(String key) {
+		Object var = tempvariables.get(key);
+		tempvariables.remove(key);
+		return var;
+	}
+
+	@SuppressWarnings("unchecked")
+	public HashMap<String, Object> getTempVariables() {
+		return (HashMap<String, Object>) tempvariables.clone();
 	}
 
 	public boolean end() {

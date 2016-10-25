@@ -16,6 +16,7 @@ import com.rictacius.makeAMinigame.script.operation.Operation;
 import com.rictacius.makeAMinigame.script.operation.ReturnOperation;
 import com.rictacius.makeAMinigame.script.operation.RunOperation;
 import com.rictacius.makeAMinigame.script.operation.SetOperation;
+import com.rictacius.makeAMinigame.script.operation.TempSetOperation;
 import com.rictacius.makeAMinigame.util.Log;
 
 public class ScriptLine {
@@ -73,6 +74,12 @@ public class ScriptLine {
 				String left = data[0].trim();
 				String right = data[1].trim();
 				return new SetOperation(raw, left, right, script, this);
+			} else if (line.startsWith("tempset")) {
+				line = line.substring(3).trim();
+				String[] data = line.split("=");
+				String left = data[0].trim();
+				String right = data[1].trim();
+				return new TempSetOperation(raw, left, right, script, this);
 			} else if (line.startsWith("return")) {
 				line = line.substring(6).trim();
 				return new ReturnOperation(raw, line, script);
@@ -106,12 +113,19 @@ public class ScriptLine {
 					}
 					String method = data[2];
 					if (data.length >= 4) {
-						String rawa = data[3];
+						String rawa = line.substring(line.indexOf('['), line.indexOf(']') + 1);
 						if (rawa.contains(",")) {
 							String[] rargs = rawa.split(",");
-							Object[] args = new String[rargs.length];
+							Object[] args = new Object[rargs.length];
 							for (int i = 0; i < rargs.length; i++) {
-								args[i] = script.getVariable(rargs[i]);
+								String arg = rargs[i];
+								if (script.getVariable(arg) != null) {
+									args[i] = script.getVariable(arg);
+								} else if (arg.contains("\"") && arg.contains("\"")) {
+									args[i] = arg;
+								} else {
+									args[i] = Double.parseDouble(arg);
+								}
 							}
 							return new MPlayerOperation.Reflect(raw, data[1], script, mplayer, method, args);
 						} else {
