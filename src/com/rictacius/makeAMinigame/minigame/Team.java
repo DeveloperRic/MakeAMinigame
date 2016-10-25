@@ -56,6 +56,13 @@ public class Team {
 		players.add(e);
 	}
 
+	public void kickPlayer(MPlayer p, boolean safe) {
+		if (!safe) {
+			kills -= getKills(p);
+		}
+		players.remove(p);
+	}
+
 	public int getKills() {
 		return kills;
 	}

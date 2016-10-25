@@ -1,12 +1,13 @@
 package com.rictacius.makeAMinigame.script;
 
 import java.io.File;
-import java.util.HashMap;
+import java.util.Set;
 
 import org.bukkit.Bukkit;
 
 import com.rictacius.makeAMinigame.Main;
 import com.rictacius.makeAMinigame.data.MPlayer;
+import com.rictacius.makeAMinigame.event.MEvent;
 import com.rictacius.makeAMinigame.script.Script.Section;
 import com.rictacius.makeAMinigame.script.operation.ErrorOperation;
 import com.rictacius.makeAMinigame.script.operation.MPlayerOperation;
@@ -23,7 +24,7 @@ public class ScriptLine {
 	private String line;
 	private String raw;
 	private Script.Section section;
-	private Script.Section.EventType event;
+	private MEvent.EventType event;
 	private boolean isevent;
 	private int number;
 	private Script script;
@@ -35,7 +36,7 @@ public class ScriptLine {
 		this.script = script;
 	}
 
-	public ScriptLine(String line, Script.Section section, Script.Section.EventType event, int number, Script script) {
+	public ScriptLine(String line, Script.Section section, MEvent.EventType event, int number, Script script) {
 		this.line = line.trim();
 		this.raw = line;
 		this.number = number;
@@ -97,9 +98,9 @@ public class ScriptLine {
 					MPlayer player = (MPlayer) script.getVariable(parg);
 					int length = data[0].length() + data[1].length() + 2;
 					String message = line.substring(length);
-					HashMap<String, Object> vars = script.getVariables();
-					for (String key : vars.keySet()) {
-						Object value = vars.get(key);
+					Set<String> vars = script.getVariables();
+					for (String key : vars) {
+						Object value = script.getVariable(key);
 						message = message.replaceAll("%" + key + "%", String.valueOf(value));
 					}
 					return new MPlayerOperation.Message(raw, player, message);
@@ -159,11 +160,11 @@ public class ScriptLine {
 					if (transfer) {
 						Log.log(getClass(), script.getName() + " > Transfering variables in " + this.script.getName()
 								+ " to " + script.getName(), Log.Level.INFO);
-						HashMap<String, Object> vars = this.script.getVariables();
+						Set<String> vars = this.script.getVariables();
 						boolean worked = false;
-						for (String key : vars.keySet()) {
+						for (String key : vars) {
 							worked = script.addVariable(key);
-							worked = script.setVariable(key, vars.get(key));
+							worked = script.setVariable(key, this.script.getVariable(key));
 						}
 						if (!worked) {
 							Log.log(getClass(), script.getName() + " > Could not transfer variables in "
@@ -197,7 +198,7 @@ public class ScriptLine {
 		return valid;
 	}
 
-	public Script.Section.EventType getEvent() {
+	public MEvent.EventType getEvent() {
 		return event;
 	}
 

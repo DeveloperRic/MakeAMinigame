@@ -18,6 +18,7 @@ settings:
  kills-to-end: 20
  game-ends-with-time: true
  time-to-end: 300
+ quit-loc: ''
 messages:
  player-join: '&aWelcome to the minigame!'
  arena-starting: '&6Arena has reached minimum player count... Game starting!'
@@ -33,6 +34,9 @@ messages:
   - '&6    %1kill% &7- &b%1count%'
   - '&e    %2kill% &7- &b%2count%'
   - '&c    %1kill% &7- &b%2count%'
+  player-quit: &cYou left the game.
+  player-kicked: &c%pname% was kicked from the game.
+  player-left: &c%pname% left the game.
 teams:
  red:
   name: '&cRed'

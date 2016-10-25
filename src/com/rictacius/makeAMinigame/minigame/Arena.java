@@ -16,8 +16,8 @@ import org.bukkit.event.block.BlockPlaceEvent;
 
 import com.rictacius.makeAMinigame.Main;
 import com.rictacius.makeAMinigame.data.MPlayer;
+import com.rictacius.makeAMinigame.event.MEvent;
 import com.rictacius.makeAMinigame.script.Script;
-import com.rictacius.makeAMinigame.script.Script.Section.EventType;
 import com.rictacius.makeAMinigame.script.ScriptManager;
 import com.rictacius.makeAMinigame.util.PermCheck;
 import com.rictacius.makeAMinigame.util.Utils;
@@ -25,8 +25,7 @@ import com.rictacius.makeAMinigame.util.Utils;
 public class Arena implements Listener {
 	private Minigame minigame;
 	private World world;
-	private Location spawn;
-	private Location lobby;
+	private Location spawn, lobby, quitLoc;
 	private int min, max, startTimer, startTime, timeToEnd, killsToEnd, endTimer, duration;
 	private List<MPlayer> players = new ArrayList<MPlayer>();
 	private List<Team> teams = new ArrayList<Team>();
@@ -37,9 +36,10 @@ public class Arena implements Listener {
 	public Arena(Minigame minigame) {
 		this.minigame = minigame;
 		config = MinigameManager.getConfig(minigame.getId());
-		this.world = Bukkit.getWorld(getStringSetting("world"));
+		this.world = Bukkit.getWorld(getSetting("world"));
 		this.spawn = getLocationSetting("spawn");
 		this.lobby = getLocationSetting("lobby");
+		this.quitLoc = getLocationSetting("quit-loc");
 		this.min = getIntegerSetting("minPlayers");
 		this.max = getIntegerSetting("maxPlayers");
 		this.script = minigame.getScript();
@@ -51,11 +51,11 @@ public class Arena implements Listener {
 			Team team = new Team(this, id);
 			teams.add(team);
 		}
-		runScriptEvent(EventType.ARENA_CREATED);
+		runScriptEvent(MEvent.EventType.ARENA_CREATED);
 	}
 
 	public void begin() {
-		runScriptEvent(EventType.ARENA_START);
+		runScriptEvent(MEvent.EventType.ARENA_START);
 		teleport(spawn);
 		for (Team team : teams) {
 			for (MPlayer player : players) {
@@ -76,7 +76,7 @@ public class Arena implements Listener {
 			player.player().getInventory().clear();
 		}
 		player.player().teleport(lobby);
-		player.message(getMessage("player-join"));
+		player.message(getMessage("player-join"), true);
 		int smallestTeam = 0;
 		if (teams.size() > 1) {
 			for (int i = 0; i < teams.size(); i++) {
@@ -86,14 +86,26 @@ public class Arena implements Listener {
 			}
 		}
 		teams.get(smallestTeam).addPlayer(player);
-		player.message(getMessage("join-team").replaceAll("%team%", teams.get(smallestTeam).getName()));
+		player.message(getMessage("join-team").replaceAll("%team%", teams.get(smallestTeam).getName()), true);
 		players.add(player);
 		if (players.size() >= min) {
 			if (!starting) {
-				runScriptEvent(EventType.ARENA_STARTING);
+				runScriptEvent(MEvent.EventType.ARENA_STARTING);
 				beginStartTimer();
 			}
 		}
+	}
+
+	public void quit(MPlayer player, boolean safe) {
+		if (safe) {
+			player.loadSavedInventory();
+			player.message(getMessage("player-quit"), true);
+		}
+		player.player().teleport(quitLoc);
+		getTeam(player).kickPlayer(player, safe);
+		players.remove(player);
+		broadcast((safe ? getMessage("player-left") : getMessage("player-kicked")).replaceAll("%pname%",
+				player.player().getName()));
 	}
 
 	public void beginStartTimer() {
@@ -104,7 +116,7 @@ public class Arena implements Listener {
 					cancelStartTimer();
 					begin();
 				} else {
-					runScriptEvent(EventType.ARENA_START_TIME);
+					runScriptEvent(MEvent.EventType.ARENA_START_TIME);
 					if (startTime % getIntegerSetting("start-timer-message-interval") == 0 || startTime >= 5) {
 						broadcast(getMessage("start-timer"));
 					}
@@ -219,11 +231,11 @@ public class Arena implements Listener {
 	}
 
 	public void end() {
-		runScriptEvent(EventType.ARENA_FINISH);
+		runScriptEvent(MEvent.EventType.ARENA_FINISH);
 		players.clear();
 		running = false;
 		if (getBooleanSetting("restart-onend")) {
-			long delay = Long.parseLong(getStringSetting("restart-delay"));
+			long delay = Long.parseLong(getSetting("restart-delay"));
 			Bukkit.getScheduler().scheduleSyncDelayedTask(Main.pl, new Runnable() {
 				@Override
 				public void run() {
@@ -238,7 +250,7 @@ public class Arena implements Listener {
 		World world = event.getBlock().getWorld();
 		if (world.getName().equals(this.world.getName())) {
 			Player player = event.getPlayer();
-			String bypass = getStringSetting("bypass-build-permission");
+			String bypass = getSetting("bypass-build-permission");
 			if (!player.isOp()) {
 				if (!PermCheck.hasAccess(player, bypass)) {
 					event.setCancelled(true);
@@ -252,7 +264,7 @@ public class Arena implements Listener {
 		World world = event.getBlock().getWorld();
 		if (world.getName().equals(this.world.getName())) {
 			Player player = event.getPlayer();
-			String bypass = getStringSetting("bypass-build-permission");
+			String bypass = getSetting("bypass-build-permission");
 			if (!player.isOp()) {
 				if (!PermCheck.hasAccess(player, bypass)) {
 					event.setCancelled(true);
@@ -321,7 +333,7 @@ public class Arena implements Listener {
 		return Boolean.parseBoolean(config.getString("settings." + setting));
 	}
 
-	public String getStringSetting(String setting) {
+	public String getSetting(String setting) {
 		return config.getString("settings." + setting);
 	}
 
@@ -334,7 +346,7 @@ public class Arena implements Listener {
 	}
 
 	public String getMessage(String message) {
-		return ChatColor.translateAlternateColorCodes('&', config.getString("messages." + message));
+		return config.getString("messages." + message);
 	}
 
 	public List<String> getMessageList(String message) {
@@ -346,13 +358,13 @@ public class Arena implements Listener {
 		return send;
 	}
 
-	public void runScriptEvent(Script.Section.EventType type) {
+	public void runScriptEvent(MEvent.EventType type) {
 		script.run(ScriptManager.readScript(script, Script.Section.EVENT, type));
 	}
 
 	public void broadcast(String message) {
 		for (MPlayer player : players) {
-			player.message(message);
+			player.message(message, true);
 		}
 	}
 
