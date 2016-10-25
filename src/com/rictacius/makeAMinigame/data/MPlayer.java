@@ -5,6 +5,8 @@ import java.util.HashMap;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.PlayerInventory;
 
+import net.md_5.bungee.api.ChatColor;
+
 public class MPlayer {
 	private Player player;
 	private HashMap<String, Object> settings = new HashMap<String, Object>();
@@ -15,7 +17,9 @@ public class MPlayer {
 		player.chat("hi");
 	}
 
-	public void message(String message) {
+	public void message(String message, boolean colour) {
+		if (colour)
+			message = ChatColor.translateAlternateColorCodes('&', message);
 		player.sendMessage(message);
 	}
 

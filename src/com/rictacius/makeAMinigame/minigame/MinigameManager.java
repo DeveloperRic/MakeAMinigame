@@ -3,7 +3,9 @@ package com.rictacius.makeAMinigame.minigame;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -21,6 +23,14 @@ public class MinigameManager {
 
 	public static Minigame getMinigame(String id) {
 		return minigames.get(id);
+	}
+
+	public static List<Minigame> getMinigameInstances() {
+		List<Minigame> minigames = new ArrayList<Minigame>();
+		for (Minigame minigame : MinigameManager.minigames.values()) {
+			minigames.add(minigame);
+		}
+		return minigames;
 	}
 
 	public static void addMinigame(Minigame minigame) {

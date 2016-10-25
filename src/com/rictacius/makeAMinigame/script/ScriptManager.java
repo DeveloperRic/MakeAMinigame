@@ -7,6 +7,8 @@ import java.util.Map;
 
 import org.bukkit.configuration.file.FileConfiguration;
 
+import com.rictacius.makeAMinigame.event.MEvent;
+import com.rictacius.makeAMinigame.script.Script.Section;
 import com.rictacius.makeAMinigame.script.operation.ErrorOperation;
 import com.rictacius.makeAMinigame.script.operation.Operation;
 import com.rictacius.makeAMinigame.script.operation.RunOperation;
@@ -61,7 +63,7 @@ public class ScriptManager {
 		return send;
 	}
 
-	public static List<ScriptLine> readScript(Script script, Script.Section section, Script.Section.EventType event) {
+	public static List<ScriptLine> readScript(Script script, Script.Section section, MEvent.EventType event) {
 		if (!section.equals(Script.Section.EVENT)) {
 			return readScript(script, section);
 		}
@@ -129,6 +131,22 @@ public class ScriptManager {
 		for (String key : values.keySet()) {
 			if (ScriptUtils.isFunction(key, script)) {
 				send.add(key);
+			}
+		}
+		return send;
+	}
+
+	public static List<MEvent.EventType> generateHandlerTypes(Script script) {
+		List<MEvent.EventType> send = new ArrayList<MEvent.EventType>();
+		FileConfiguration config = ScriptUtils.getConfig(script);
+		for (MEvent.EventType type : MEvent.EventType.values()) {
+			List<String> lines = config.getStringList(Section.EVENT.toString() + "." + type.toString());
+			if (lines != null) {
+				if (lines.size() >= 1) {
+					if (lines.get(lines.size() - 1).equals("close")) {
+						send.add(type);
+					}
+				}
 			}
 		}
 		return send;
